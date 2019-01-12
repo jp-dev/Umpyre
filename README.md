@@ -1,2 +1,3 @@
 # Umpyre
-Python baseball game using PyGame library
+Baseball game written in Python using the PyGame library.
+

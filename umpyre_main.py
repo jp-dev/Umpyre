@@ -10,12 +10,14 @@ import os
 import sys
 
 
+""" --------------------- INITIALIZE ------------------------ """
+pygame.mixer.pre_init(44100, -16, 2, 512)
+pygame.mixer.init()
 pygame.init() # Initialize pygame
 clock = pygame.time.Clock()
-font = pygame.font.SysFont(None, 48)
-# render text
 
 """ ------------------------- LABELS ------------------------------ """
+font = pygame.font.SysFont(None, 48)
 label_pitch = font.render("Press F to pitch!", 1, (0, 0, 255))
 label_bat = font.render("Press SPACE to bat!", 1, (0, 0, 255))
 label_playball = font.render("Press J to Play Ball!!!", 1, (0, 0, 255))
@@ -29,8 +31,7 @@ screen = pygame.display.set_mode((bg_width, bg_height))
 pygame.display.set_caption("UMPYRE")
 
 
-""" -------------------------- AUDIO --------------------------------- """
-pygame.mixer.init()
+""" ------------------------ SOUNDS ------------------------------ """
 sound_beep = pygame.mixer.Sound(os.path.join("audio", "beep.wav"))
 sound_playball = pygame.mixer.Sound(os.path.join("audio", "playball.wav"))
 sound_strike = pygame.mixer.Sound(os.path.join("audio", "pitch_strike.wav"))
@@ -89,8 +90,8 @@ if __name__ == '__main__':
                     print(f"{key_index}: You pressed {event.key:c}")
                     sound_homerun.play()
             elif event.type == pygame.KEYUP:
-                sound_playball.stop()
-                sound_strike.stop()
-                sound_homerun.stop()
+                pygame.mixer.fadeout(500)
         pygame.display.update()
+
+
 

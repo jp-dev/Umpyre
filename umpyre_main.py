@@ -21,6 +21,7 @@ font = pygame.font.SysFont(None, 48)
 label_pitch = font.render("Press F to pitch!", 1, (0, 0, 255))
 label_bat = font.render("Press SPACE to bat!", 1, (0, 0, 255))
 label_playball = font.render("Press J to Play Ball!!!", 1, (0, 0, 255))
+label_musictoggle = font.render("Press M to toggle music On/Off!", 1, (0, 0, 255))
 
 
 """ ----------------------- BACKGROUND ---------------------------- """
@@ -32,10 +33,13 @@ pygame.display.set_caption("UMPYRE")
 
 
 """ ------------------------ SOUNDS ------------------------------ """
-sound_beep = pygame.mixer.Sound(os.path.join("audio", "beep.wav"))
 sound_playball = pygame.mixer.Sound(os.path.join("audio", "playball.wav"))
 sound_strike = pygame.mixer.Sound(os.path.join("audio", "pitch_strike.wav"))
 sound_homerun = pygame.mixer.Sound(os.path.join("audio", "batter_homerun.wav"))
+
+""" -------------------------- MUSIC --------------------------------- """
+music_rockroll = pygame.mixer.music.load(os.path.join("audio", "rocksong.ogg"))
+
 
 
 if __name__ == '__main__':
@@ -68,6 +72,7 @@ if __name__ == '__main__':
         screen.blit(label_pitch, (850, 400))
         screen.blit(label_bat, (850, 450))
         screen.blit(label_playball, (850, 500))
+        screen.blit(label_musictoggle, (850, 550))
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
         mouse_pos = font.render(f"( x: {mouse_x} , y: {mouse_y} )", 1, (0, 0, 0))
@@ -83,12 +88,23 @@ if __name__ == '__main__':
                 if keys[K_j]:
                     print(f"{key_index}: You pressed {event.key:c}")
                     sound_playball.play()
+                    pygame.mixer.music.set_volume(0.05)
                 if keys[K_f]:
                     print(f"{key_index}: You pressed {event.key:c}")
                     sound_strike.play()
+                    pygame.mixer.music.set_volume(0.05)
                 if keys[K_SPACE]:
                     print(f"{key_index}: You pressed {event.key:c}")
                     sound_homerun.play()
+                    pygame.mixer.music.set_volume(0.05)
+                if keys[K_m]:
+                    if pygame.mixer.music.get_busy():
+                        print(f"{key_index}: You pressed {event.key:c}, music OFF")
+                        pygame.mixer.music.fadeout(500)
+                    else:
+                        print(f"{key_index}: You pressed {event.key:c}, music ON")
+                        pygame.mixer.music.play(loops=-1)
+                        pygame.mixer.music.set_volume(0.20)
             elif event.type == pygame.KEYUP:
                 pygame.mixer.fadeout(500)
         pygame.display.update()

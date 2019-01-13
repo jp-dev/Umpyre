@@ -41,7 +41,6 @@ sound_homerun = pygame.mixer.Sound(os.path.join("audio", "batter_homerun.wav"))
 music_rockroll = pygame.mixer.music.load(os.path.join("audio", "rocksong.ogg"))
 
 
-
 if __name__ == '__main__':
 
     key_index = 0

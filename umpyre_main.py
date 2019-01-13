@@ -18,6 +18,7 @@ clock = pygame.time.Clock()
 
 """ ------------------------- LABELS ------------------------------ """
 font = pygame.font.SysFont(None, 48)
+label_quit = font.render("ESC: Quit", 1, (255, 0, 0))
 label_pitch = font.render("Press F to pitch!", 1, (0, 0, 255))
 label_bat = font.render("Press SPACE to bat!", 1, (0, 0, 255))
 label_playball = font.render("Press J to Play Ball!!!", 1, (0, 0, 255))
@@ -32,14 +33,19 @@ screen = pygame.display.set_mode((bg_width, bg_height))
 pygame.display.set_caption("UMPYRE")
 
 
-""" ------------------------ SOUNDS ------------------------------ """
+""" -------------------------- IMAGES ------------------------------ """
+img_volume = pygame.image.load(os.path.join("icons", "volume_32.png"))
+img_volume_rect = screen.blit(img_volume, (bg_width - 45, 10))
+img_mute = pygame.image.load(os.path.join("icons", "mute_32.png"))
+
+""" ------------------------ SOUND FX ------------------------------ """
 sound_playball = pygame.mixer.Sound(os.path.join("audio", "playball.wav"))
 sound_strike = pygame.mixer.Sound(os.path.join("audio", "pitch_strike.wav"))
 sound_homerun = pygame.mixer.Sound(os.path.join("audio", "batter_homerun.wav"))
 
 """ -------------------------- MUSIC --------------------------------- """
-music_rockroll = pygame.mixer.music.load(os.path.join("audio", "rocksong.ogg"))
-
+music_rocksong_1 = pygame.mixer.music.load(os.path.join("audio", "rocksong_1.ogg"))
+music_rocksong_2 = pygame.mixer.music.load(os.path.join("audio", "rocksong_2.ogg"))
 
 if __name__ == '__main__':
 
@@ -72,6 +78,8 @@ if __name__ == '__main__':
         screen.blit(label_bat, (850, 450))
         screen.blit(label_playball, (850, 500))
         screen.blit(label_musictoggle, (850, 550))
+        screen.blit(img_volume, (bg_width - 45, 10))
+        screen.blit(label_quit, (20, bg_height - 50))
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
         mouse_pos = font.render(f"( x: {mouse_x} , y: {mouse_y} )", 1, (0, 0, 0))
@@ -80,10 +88,24 @@ if __name__ == '__main__':
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
-            elif event.type == MOUSEBUTTONDOWN:
-                pass
+            elif event.type == MOUSEBUTTONDOWN and event.button == 1:
+                print(event.pos)
+                print(f"Mousebutton Down: x= {mouse_x}, y= {mouse_y}")
+                print(img_volume.get_rect().collidepoint(mouse_x, mouse_y))
+                if img_volume_rect.collidepoint(mouse_x, mouse_y):
+                    if pygame.mixer.music.get_busy():
+                        pygame.mixer.music.fadeout(500)
+                        # screen.blit(img_mute, (bg_width - 45, 10))
+                    else:
+                        print(f"You clicked the volume icon")
+                        pygame.mixer.music.load(os.path.join("audio", "rocksong_2.ogg"))
+                        pygame.mixer.music.set_volume(0.20)
+                        pygame.mixer.music.play(-1)
+                        # screen.blit(img_volume, (bg_width - 45, 10))
             elif event.type == pygame.KEYDOWN:
                 keys = pygame.key.get_pressed()
+                if keys[K_ESCAPE]:
+                    sys.exit()
                 if keys[K_j]:
                     print(f"{key_index}: You pressed {event.key:c}")
                     sound_playball.play()
@@ -102,8 +124,9 @@ if __name__ == '__main__':
                         pygame.mixer.music.fadeout(500)
                     else:
                         print(f"{key_index}: You pressed {event.key:c}, music ON")
-                        pygame.mixer.music.play(loops=-1)
+                        pygame.mixer.music.load(os.path.join("audio", "rocksong_1.ogg"))
                         pygame.mixer.music.set_volume(0.20)
+                        pygame.mixer.music.play(loops=-1)
             elif event.type == pygame.KEYUP:
                 pygame.mixer.fadeout(500)
         pygame.display.update()

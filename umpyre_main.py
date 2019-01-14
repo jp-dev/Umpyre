@@ -30,28 +30,54 @@ bg = pygame.image.load(os.path.join("image", "umpyre_baseball_field.png"))
 bg_width = bg.get_width()
 bg_height = bg.get_height()
 screen = pygame.display.set_mode((bg_width, bg_height))
+bg = pygame.image.load(os.path.join("image", "umpyre_baseball_field.png")).convert()
 pygame.display.set_caption("UMPYRE")
 
 
 """ -------------------------- IMAGES ------------------------------ """
-img_volume = pygame.image.load(os.path.join("icons", "volume_32.png"))
+img_volume = pygame.image.load(os.path.join("icons", "volume_32.png")).convert_alpha()
 img_volume_rect = screen.blit(img_volume, (bg_width - 45, 10))
 img_mute = pygame.image.load(os.path.join("icons", "mute_32.png"))
+img_batter = pygame.image.load(os.path.join("icons", "baseball-player-with-bat_128.png"))
+img_pitcher = pygame.image.load(os.path.join("icons", "pitcher_64.png"))
+img_ball = pygame.image.load(os.path.join("icons", "ball_16.png")).convert_alpha()
+img_ball_rect = img_ball.get_rect()
+img_glove = pygame.image.load(os.path.join("icons", "baseball-glove_64.png"))
 
 """ ------------------------ SOUND FX ------------------------------ """
 sound_playball = pygame.mixer.Sound(os.path.join("audio", "playball.wav"))
+sound_playball.set_volume(0.2)
 sound_strike = pygame.mixer.Sound(os.path.join("audio", "pitch_strike.wav"))
+sound_strike.set_volume(0.2)
 sound_homerun = pygame.mixer.Sound(os.path.join("audio", "batter_homerun.wav"))
 
 """ -------------------------- MUSIC --------------------------------- """
-music_rocksong_1 = pygame.mixer.music.load(os.path.join("audio", "rocksong_1.ogg"))
-music_rocksong_2 = pygame.mixer.music.load(os.path.join("audio", "rocksong_2.ogg"))
+music_rocksong_1 = pygame.mixer.music.load(os.path.join("audio", "rocksong_2.ogg"))
+music_rocksong_2 = pygame.mixer.music.load(os.path.join("audio", "rocksong_1.ogg"))
+
+
+# def pitch_ball(img_ball):
+#
+#     img_ball_rect = img_ball.get_rect()
+#
+#     for i in range(100):
+#         screen.blit(bg, img_ball_rect)
+#         img_ball_rect = img_ball_rect.move(2, 0)
+#         screen.blit(img_ball, img_volume_rect)
+#         pygame.display.update()
+#         pygame.time.delay(50)
+
 
 if __name__ == '__main__':
 
+
     key_index = 0
 
+    # pygame.mixer.music.play(-1)
+    # pygame.mixer.music.set_volume(0.05)
+
     # Create a total of nine Inning() instances
+
     inning_list = [Inning(inning_num=i) for i in range(1, 10)]
 
     print(inning_list, '\n')
@@ -71,15 +97,23 @@ if __name__ == '__main__':
         print(f"Visitor runs for inning {inning.inning_num}: {visitor_runs}")
         print(f"Home Team runs for inning {inning.inning_num}: {hometeam_runs}")
 
+
     while True:  # Event Loop
         clock.tick(60)
         screen.blit(bg, (0, 0))
-        screen.blit(label_pitch, (850, 400))
-        screen.blit(label_bat, (850, 450))
-        screen.blit(label_playball, (850, 500))
-        screen.blit(label_musictoggle, (850, 550))
+        screen.blit(label_pitch, (600, 50))
+        screen.blit(label_bat, (600, 100))
+        screen.blit(label_playball, (600, 150))
+        screen.blit(label_musictoggle, (600, 200))
         screen.blit(img_volume, (bg_width - 45, 10))
         screen.blit(label_quit, (20, bg_height - 50))
+        screen.blit(img_pitcher, (820, 450))
+        screen.blit(img_ball, (820, 450))
+        screen.blit(img_glove, (833, bg_height - 75))
+        screen.blit(img_batter, (735, bg_height - 225))
+
+
+
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
         mouse_pos = font.render(f"( x: {mouse_x} , y: {mouse_y} )", 1, (0, 0, 0))
@@ -89,9 +123,7 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 sys.exit()
             elif event.type == MOUSEBUTTONDOWN and event.button == 1:
-                print(event.pos)
                 print(f"Mousebutton Down: x= {mouse_x}, y= {mouse_y}")
-                print(img_volume.get_rect().collidepoint(mouse_x, mouse_y))
                 if img_volume_rect.collidepoint(mouse_x, mouse_y):
                     if pygame.mixer.music.get_busy():
                         pygame.mixer.music.fadeout(500)
@@ -112,6 +144,7 @@ if __name__ == '__main__':
                     pygame.mixer.music.set_volume(0.05)
                 if keys[K_f]:
                     print(f"{key_index}: You pressed {event.key:c}")
+                    # pitch_ball(img_ball)
                     sound_strike.play()
                     pygame.mixer.music.set_volume(0.05)
                 if keys[K_SPACE]:
